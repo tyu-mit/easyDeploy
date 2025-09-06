@@ -1,0 +1,49 @@
+repos:
+  # Ruff for Python linting and formatting
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.12.12
+    hooks:
+      # Run the linter
+      - id: ruff
+        args: [--fix]
+      # Run the formatter
+      - id: ruff-format
+
+  # General code quality checks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      # Check for files that parse as valid Python
+      - id: check-ast
+      # Check for merge conflicts
+      - id: check-merge-conflict
+      # Check YAML files for parseable syntax
+      - id: check-yaml
+      # Check TOML files for parseable syntax
+      - id: check-toml
+      # Prevent committing large files
+      - id: check-added-large-files
+        args: ['--maxkb=1000']
+      # Check for private keys
+      - id: detect-private-key
+      # Trim trailing whitespace
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+      # Fix end of files
+      - id: end-of-file-fixer
+      # Sort requirements.txt files
+      - id: requirements-txt-fixer
+
+  # Shell script checks (only for project scripts, not .claude)
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.10.0.1
+    hooks:
+      - id: shellcheck
+        args: [--severity=warning]
+        files: ^src/scripts/.*\.sh$
+
+  # Check for secrets (optional but recommended)
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.5.0
+    hooks:
+      - id: detect-secrets

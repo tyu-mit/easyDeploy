@@ -1,0 +1,59 @@
+# GCP Instance Configuration Template
+# This template is used to generate GCP compute instance configurations
+
+instance:
+  name: "{{ deployment_name }}"
+  project_id: "{{ project_id }}"
+  zone: "{{ zone }}"
+  machine_type: "{{ machine_type }}"
+
+  boot_disk:
+    image_family: "ubuntu-2204-lts"
+    image_project: "ubuntu-os-cloud"
+    size_gb: 100
+    type: "pd-standard"
+
+  network:
+    network: "default"
+    external_ip: true
+
+  metadata:
+    ssh-keys: "{{ ssh_public_key }}"
+    startup-script: |
+      #!/bin/bash
+      # easyDeploy startup script
+      export DEPLOY_USER="{{ deploy_user }}"
+      export SSH_PORT="{{ ssh_port }}"
+      export CUDA_VERSION="{{ cuda_version }}"
+      export ROS_DISTRO="{{ ros_distro }}"
+      export NGC_API_KEY="{{ ngc_api_key }}"
+      export CPU_ONLY="{{ cpu_only }}"
+
+      # Download and run setup scripts
+      cd /tmp
+      # TODO: Download scripts from deployment source
+
+  tags:
+    - "easydeploy"
+    - "{{ deployment_name }}"
+    {% if gpu_enabled -%}
+    - "gpu-enabled"
+    {% endif -%}
+
+# GPU configuration (if enabled)
+{% if gpu_enabled %}
+gpu:
+  type: "{{ gpu_type | default('nvidia-tesla-t4') }}"
+  count: {{ gpu_count | default(1) }}
+{% endif %}
+
+# Firewall rules
+firewall_rules:
+  - name: "{{ deployment_name }}-ssh"
+    direction: "INGRESS"
+    priority: 1000
+    source_ranges: ["{{ allowed_ip_ranges | join('", "') }}"]
+    allowed:
+      - ip_protocol: "tcp"
+        ports: ["{{ ssh_port }}"]
+    target_tags: ["{{ deployment_name }}"]

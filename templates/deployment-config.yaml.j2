@@ -1,0 +1,58 @@
+# Deployment Configuration Template
+# This file contains the full configuration for a deployment
+
+deployment:
+  name: "{{ deployment_name }}"
+  platform: "{{ platform }}"
+  created_at: "{{ timestamp }}"
+  created_by: "{{ user }}"
+
+cloud:
+  {% if platform == "gcp" -%}
+  gcp:
+    project_id: "{{ project_id }}"
+    region: "{{ region }}"
+    zone: "{{ zone }}"
+  {% elif platform == "azure" -%}
+  azure:
+    subscription_id: "{{ subscription_id }}"
+    resource_group: "{{ resource_group }}"
+    location: "{{ location }}"
+  {% endif -%}
+
+instance:
+  machine_type: "{{ machine_type }}"
+  gpu_enabled: {{ gpu_enabled }}
+  {% if gpu_enabled -%}
+  gpu_type: "{{ gpu_type }}"
+  gpu_count: {{ gpu_count }}
+  {% endif -%}
+
+network:
+  ssh_port: {{ ssh_port }}
+  allowed_ip_ranges:
+    {% for ip in allowed_ip_ranges -%}
+    - "{{ ip }}"
+    {% endfor -%}
+
+software:
+  python_version: "{{ python_version }}"
+  {% if install_ros -%}
+  ros:
+    enabled: true
+    distro: "{{ ros_distro }}"
+  {% endif -%}
+  {% if install_isaac -%}
+  isaac:
+    enabled: true
+    version: "{{ isaac_version }}"
+    install_lab: {{ install_isaac_lab }}
+  {% endif -%}
+  {% if gpu_enabled -%}
+  cuda:
+    version: "{{ cuda_version }}"
+  {% endif -%}
+
+user:
+  username: "{{ deploy_user }}"
+  ssh_public_key: "{{ ssh_public_key }}"
