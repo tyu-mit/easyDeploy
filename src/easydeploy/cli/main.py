@@ -3,6 +3,8 @@
 import click
 from rich.console import Console
 
+from easydeploy.cli.gcp import gcp
+
 console = Console()
 
 
@@ -60,6 +62,10 @@ def list():
     console.print("[bold blue]Active deployments:[/bold blue]")
     # TODO: Implement list logic
     console.print("[yellow]List functionality not yet implemented[/yellow]")
+
+
+# Register GCP subcommand group
+main.add_command(gcp)
 
 
 if __name__ == "__main__":

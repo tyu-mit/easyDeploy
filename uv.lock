@@ -407,22 +407,30 @@ name = "easydeploy"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
-    { name = "azure-identity" },
-    { name = "azure-mgmt-compute" },
     { name = "click" },
     { name = "google-auth" },
-    { name = "google-cloud-compute" },
-    { name = "jinja2" },
-    { name = "paramiko" },
     { name = "pyyaml" },
     { name = "rich" },
 ]
 
 [package.optional-dependencies]
+azure = [
+    { name = "azure-identity" },
+    { name = "azure-mgmt-compute" },
+]
 dev = [
     { name = "pytest" },
     { name = "pytest-cov" },
     { name = "ruff" },
+]
+gcp = [
+    { name = "google-cloud-compute" },
+]
+ssh = [
+    { name = "paramiko" },
+]
+templates = [
+    { name = "jinja2" },
 ]
 
 [package.dev-dependencies]
@@ -435,20 +443,20 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "azure-identity", specifier = ">=1.12.0" },
-    { name = "azure-mgmt-compute", specifier = ">=30.0.0" },
+    { name = "azure-identity", marker = "extra == 'azure'", specifier = ">=1.12.0" },
+    { name = "azure-mgmt-compute", marker = "extra == 'azure'", specifier = ">=30.0.0" },
     { name = "click", specifier = ">=8.0.0" },
     { name = "google-auth", specifier = ">=2.17.0" },
-    { name = "google-cloud-compute", specifier = ">=1.15.0" },
-    { name = "jinja2", specifier = ">=3.1.0" },
-    { name = "paramiko", specifier = ">=3.0.0" },
+    { name = "google-cloud-compute", marker = "extra == 'gcp'", specifier = ">=1.15.0" },
+    { name = "jinja2", marker = "extra == 'templates'", specifier = ">=3.1.0" },
+    { name = "paramiko", marker = "extra == 'ssh'", specifier = ">=3.0.0" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=7.0.0" },
     { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=4.0.0" },
     { name = "pyyaml", specifier = ">=6.0" },
     { name = "rich", specifier = ">=13.0.0" },
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.1.0" },
 ]
-provides-extras = ["dev"]
+provides-extras = ["dev", "gcp", "azure", "ssh", "templates"]
 
 [package.metadata.requires-dev]
 dev = [
